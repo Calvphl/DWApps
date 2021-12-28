@@ -30,7 +30,8 @@ const SignUp = () => {
           return {
             code: item.cca2,
             name: item.name.common,
-            callingCode: `+${item.idd.suffixes}`,
+            callingCodeRoot: `${item.idd.root}`,
+            callingCodeSuffixes: `${item.idd.suffixes}`,
             flags: `https://countryflagsapi.com/png/${item.cca2}`,
           };
         });
@@ -38,7 +39,7 @@ const SignUp = () => {
         setAreas(areaData);
 
         if (areaData.length > 0) {
-          let defaultData = areaData.filter((a) => a.code == "DJ");
+          let defaultData = areaData.filter((a) => a.code == "ID");
 
           if (defaultData.length > 0) {
             setSelectedArea(defaultData[0]);
@@ -162,7 +163,7 @@ const SignUp = () => {
                 fontSize: 20,
                 lineHeight: 30,
               }}
-              onPress={() => console.log("Modal")}
+              onPress={() => setModalVisible(true)}
             >
               <View style={{ justifyContent: "center" }}>
                 <Image
@@ -172,7 +173,7 @@ const SignUp = () => {
               </View>
               <View style={{ justifyContent: "center", marginLeft: 5 }}>
                 <Image
-                  source={{ uri: selectedArea.flags }}
+                  source={{ uri: selectedArea?.flags }}
                   resizeMode="contain"
                   style={{ width: 30, height: 30 }}
                 />
@@ -186,7 +187,8 @@ const SignUp = () => {
                     lineHeight: 22,
                   }}
                 >
-                  {selectedArea.callingCode}
+                  {selectedArea?.callingCodeRoot}
+                  {selectedArea?.callingCodeSuffixes}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -288,6 +290,63 @@ const SignUp = () => {
     );
   }
 
+  function renderAreaCodeModal() {
+    const renderItem = ({ item }) => {
+      return (
+        <TouchableOpacity
+          style={{
+            padding: SIZES.padding,
+            flexDirection: "row",
+          }}
+          onPress={() => {
+            setSelectedArea(item);
+            setModalVisible(false);
+          }}
+        >
+          <Image
+            source={{ uri: item.flags }}
+            style={{ width: 30, height: 30, marginRight: 10 }}
+            resizeMode="contain"
+          />
+          <Text style={{ fontFamily: "Roboto", fontSize: 14 }}>
+            {item.name}
+          </Text>
+        </TouchableOpacity>
+      );
+    };
+
+    return (
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+        <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+          <View
+            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          >
+            <View
+              style={{
+                height: 400,
+                width: SIZES.width * 0.8,
+                backgroundColor: COLORS.lightGreen,
+                borderRadius: SIZES.radius,
+              }}
+            >
+              <FlatList
+                data={areas}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.code}
+                // showsHorizontalScrollIndicator={false}
+                // showsVerticalScrollIndicator={false}
+                style={{
+                  padding: SIZES.padding * 2,
+                  marginBottom: SIZES.padding * 2,
+                }}
+              />
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+    );
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "android" ? null : "height"}
@@ -304,6 +363,7 @@ const SignUp = () => {
           {renderButton()}
         </ScrollView>
       </LinearGradient>
+      {renderAreaCodeModal()}
     </KeyboardAvoidingView>
   );
 };
