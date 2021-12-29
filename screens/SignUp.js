@@ -15,7 +15,7 @@ import {
 import { COLORS, SIZES, FONTS, icons, images } from "../constants";
 import { LinearGradient } from "expo-linear-gradient";
 
-const SignUp = ({ navigation }) => {
+const SignUp = ({ navigation, nav }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [areas, setAreas] = useState([]);
   const [selectedArea, setSelectedArea] = useState(null);
@@ -57,7 +57,7 @@ const SignUp = ({ navigation }) => {
           marginTop: SIZES.padding * 6,
           paddingHorizontal: SIZES.padding * 2,
         }}
-        onPress={() => console.log("Sign Up")}
+        onPress={() => console.log("SignUp")}
       >
         <Image
           source={icons.back}
